@@ -37,7 +37,7 @@ void print(int **map,int dim,snake_t *sn);
 
 int main(int argc,char *argv[]){
 	
-	int i,j;
+	int i;
 	int dim;
 
 	snake_t snake;
