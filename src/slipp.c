@@ -36,7 +36,7 @@ void print(int **map,int dim,snake_t *sn);
 
 
 int main(int argc,char *argv[]){
-	
+	srand(time(NULL));
 	int i;
 	int dim;
 
@@ -68,7 +68,7 @@ int main(int argc,char *argv[]){
 		}
 
 		fd -> exists = 0;
-		snake.dir = 100; // assci char of d gia tin arxi
+		snake.dir = 100;
 		sn->score=0;
 
 
@@ -91,17 +91,16 @@ int main(int argc,char *argv[]){
 }
 
 
-void movement(snake_t *sn,int **map,int dim,food_t *fd){ //logiki gia to pws kinite to fidaki
+void movement(snake_t *sn,int **map,int dim,food_t *fd){ 
 	char input;
 	input = move();
-	// debug tolower case
 	if(input == 'D') input = 'd';
 	else if(input == 'S') input = 's';
 	else if(input == 'W') input = 'w';
 	else if(input == 'A') input = 'a';
 
-	if((( input  == 'd' || input == 'a') || (input ==  'w' || input == 's')) && (abs((sn->dir)-input)>5)) sn->dir = input; // debug gia na min girnaei stin aditheti kateuthinsi kai na trexei sinexeia me ascii times
-																														   // ascii values: a=97, d=100, w=119, s=115
+	if((( input  == 'd' || input == 'a') || (input ==  'w' || input == 's')) && (abs((sn->dir)-input)>5)) sn->dir = input; 
+																														   
 	if(sn->dir == 'd'){
 		(sn -> y)++;
 		if(sn -> y == dim-2){
@@ -205,7 +204,7 @@ void print(int **map,int dim,snake_t *sn){
 }
 
 
-void initialize(snake_t *sn,int dim,int **map){ //arxiki dimiourgia fidiou
+void initialize(snake_t *sn,int dim,int **map){ 
 	int i=0;
 	sn -> x = dim/2;
 	sn -> y = dim/2;
@@ -215,7 +214,7 @@ void initialize(snake_t *sn,int dim,int **map){ //arxiki dimiourgia fidiou
 
 	for (i=0;i<(sn -> head);i++){
 		(sn -> tempy)++;
-		map[sn -> x][(sn -> tempy) - (sn -> head)] = i+1; //vazei tis times stin oura apo 1 mexri head-1
+		map[sn -> x][(sn -> tempy) - (sn -> head)] = i+1;
 
 	}
 }
@@ -239,8 +238,7 @@ char move()
 }
 
 
-void food_generator(food_t *fd,int **map,int dim){ // symperifora tou food
-	srand(time(NULL));
+void food_generator(food_t *fd,int **map,int dim){
 
 	int a = (rand() % (dim -3 - 1 + 1)) + 1;
 	int b = (rand() % (dim -3 - 1 + 1)) + 1;
