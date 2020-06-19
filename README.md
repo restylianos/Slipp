@@ -12,7 +12,7 @@ gcc slipp
 ```
 
 ## Demo Screenshot
-(https://github.com/restylianos/snake-game/blob/master/preview/demo.jpg)
+![Screenshot](https://github.com/restylianos/snake-game/blob/master/preview/demo.jpg)
 
 
 
