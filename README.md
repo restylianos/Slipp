@@ -8,9 +8,10 @@ Use gcc to compile and play Slipp.
 ```bash
 git clone https://github.com/restylianos/snake-game.git
 gcc slipp
-./a.out
+./a.out <size of map>
 ```
 
+## Demo Screenshot
 
 
 

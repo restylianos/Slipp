@@ -3,6 +3,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <string.h> 
 
 
 
@@ -14,6 +15,7 @@ typedef struct init_snake{
 		int tempy;
 		int dir;
 		int score;
+		int is_alive;
 	}snake_t;
 
 
@@ -24,7 +26,7 @@ typedef struct food{
 }food_t;
 
 
-
+void redprint_slow(char *message_to_print);
 void die(snake_t *sn);
 void tailremove(int **map,snake_t *sn,int dim);
 void movement(snake_t *sn,int **map,int dim,food_t *fd);
@@ -51,20 +53,20 @@ int main(int argc,char *argv[]){
 
 		//debug for user input
 		if(argv[1]==NULL || argc != 2){
-		printf("[-]You forgot to pass the arguments or the arguments where more than 1!\n[+]Usage ./snake [size of grid]\n");
+		printf("\033[0;31m[-] Usage ./snake [size of grid]\n");
 		return 1;
 		}
 	
 		dim = atoi(argv[1]); 
 		if(dim < 15){
-			printf("[-]Be careful your map is too small try again. Size must be over 15!\n");
+			printf("\033[0;33m[-] Map size should be bigger than 15\n\033[0;0m");
 			exit(0);
 		}
 		
 
-		int **map=(int **)malloc(dim * sizeof(int*)); 
+		int **map=(int **)calloc(dim , sizeof(int*)); 
 		for(i=0;i<dim;i++){
-		map[i] = (int *)malloc(dim * sizeof(int));
+		map[i] = (int *)calloc(dim , sizeof(int));
 		}
 
 		fd -> exists = 0;
@@ -83,9 +85,23 @@ int main(int argc,char *argv[]){
 			usleep(150000);
 			movement(sn,map,dim,fd);
 			tailremove(map,sn,dim);
-
+			if(!sn->is_alive){
+				sn->is_alive = 1;
+				system("clear");
+				snake.dir = 100;
+				sn->score=0;
+				fd -> exists = 0;
+				initialize(sn,dim,map);
+				free(map);
+				map = NULL;
+				map=(int **)calloc(dim , sizeof(int*)); 
+				for(i=0;i<dim;i++){
+					map[i] = (int *)calloc(dim , sizeof(int));
+				}
+				continue; //fast fix for game restart
+			}
 		}
-		free(map);
+		
 		return 0;
 
 }
@@ -111,7 +127,9 @@ void movement(snake_t *sn,int **map,int dim,food_t *fd){
 			(sn -> tail)--;
 			(sn -> score)++;
 		}
-		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1) die(sn);
+		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1){
+			die(sn);
+		} 
 		(sn -> head)++;
 		map[sn -> x][ sn -> y ] = (sn -> head);
 	}
@@ -126,7 +144,9 @@ void movement(snake_t *sn,int **map,int dim,food_t *fd){
 			(sn -> tail)--;
 			(sn -> score)++;
 		}
-		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1) die(sn);
+		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1){
+			die(sn);
+		}
 		(sn -> head)++;
 		map[sn -> x][ sn -> y ] = (sn -> head);
 	}
@@ -141,7 +161,9 @@ void movement(snake_t *sn,int **map,int dim,food_t *fd){
 			(sn -> tail)--;
 			(sn -> score)++;
 		}
-		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1) die(sn);
+		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1){
+			die(sn);
+		} 
 		(sn -> head)++;
 		map[sn -> x][ sn -> y ] = (sn -> head);
 	}
@@ -156,7 +178,9 @@ void movement(snake_t *sn,int **map,int dim,food_t *fd){
 			(sn -> tail)--;
 			(sn -> score)++;
 		}
-		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1) die(sn);
+		if(map[sn->x][sn->y]!=0 &&  map[sn->x][sn->y]!=-1){
+			die(sn);
+		} 
 		(sn -> head)++;
 		map[sn -> x][ sn -> y ] = (sn -> head);
 	}
@@ -178,7 +202,7 @@ void tailremove(int **map,snake_t *sn,int dim){
 
 void print(int **map,int dim,snake_t *sn){
 	int i,j;
-	printf("Score: %d\n",sn -> score);
+	
 
 	for(i=0;i<dim;i++){
 			printf("%c",'-');
@@ -189,9 +213,9 @@ void print(int **map,int dim,snake_t *sn){
 		printf("%c",'|');
 			for(j=0;j<dim-2;j++){
 		 		if(map[i][j]==0) printf("%c",' ');
-		 		if(map[i][j] > 0 && map[i][j] != (sn->head)) printf("%c",'*'); 
+		 		if(map[i][j] > 0 && map[i][j] != (sn->head)) printf("\033[0;33m%c\033[0;0m",'*'); 
 		 		if(map[i][j]==(sn->head)) printf("%c",'@');
-		 		if(map[i][j]== -1) printf("%c",'X');
+		 		if(map[i][j]== -1) printf("\033[0;32m%c\033[0;0m",'X');
 		 		if(j==dim-3) printf("%c\n",'|');
 		    }
 	} 
@@ -201,6 +225,7 @@ void print(int **map,int dim,snake_t *sn){
 	}	
 	printf("\n");
 
+	printf("\033[0;32mScore: %d\033[0;0m\n",sn -> score);
 }
 
 
@@ -259,8 +284,37 @@ void food_generator(food_t *fd,int **map,int dim){
 	}
 }
 
-void die(snake_t *sn){ //end game
-	printf("\nYou lost! Try again\n");
-	printf("[+] Score = %d\n",sn -> score);
-	exit(0);
+void die(snake_t *sn){
+	sn->is_alive = 0;
+	int i;
+    char *lost_msg = "[-] You lost! Try again\nFinal Score:";
+	char *restart_msg = "Restarting in: 4 secs\n";
+	int final_score = sn -> score; 
+
+	redprint_slow(lost_msg);
+	printf(" %d\n",final_score);
+	redprint_slow(restart_msg);
+	printf("->");
+
+	for(i=0;i<4;i++){
+		printf(" %d   ",4-i);
+		fflush(stdout);
+		sleep(1);
+	}
+}
+
+void redprint_slow(char *message_to_print)
+{
+    int i = 0;
+    printf("\033[0;31m"); //set color to red
+    while (message_to_print[i] != '\0')
+    {
+
+        printf("%c", message_to_print[i]);
+        fflush(stdout);
+        usleep(80000);
+        i++;
+    }
+    printf("\033[0;0m"); // color reset
+    // free(message_to_print);
 }
