@@ -1,6 +1,6 @@
 #  Slipp
 
-Slipp is a small snake game written in c.
+Slipp is a mini snake game written in c.
 ## Installation
 
 Use gcc to compile and play Slipp.
